@@ -1,0 +1,43 @@
+services:
+  consumer:
+    build:
+      context: ./src
+    command: faststream run consumer:app
+    restart: unless-stopped
+    volumes:
+      - ./src:/usr/src/redis-ha
+
+  monitor:
+    build:
+      context: ./src
+    command: faststream run monitor:app
+    restart: unless-stopped
+    volumes:
+      - ./src:/usr/src/redis-ha
+
+  redis-0:
+    build:
+      context: ./
+      dockerfile: redis.Dockerfile
+    image: redis-ha
+    command: redis-server /etc/redis/redis-0.conf
+
+  redis-1:
+    image: redis-ha
+    command: redis-server /etc/redis/redis-1.conf
+
+  redis-2:
+    image: redis-ha
+    command: redis-server /etc/redis/redis-2.conf
+
+  sentinel-0:
+    image: redis-ha
+    command: redis-sentinel /etc/redis/sentinel.conf
+
+  sentinel-1:
+    image: redis-ha
+    command: redis-sentinel /etc/redis/sentinel.conf
+
+  sentinel-2:
+    image: redis-ha
+    command: redis-sentinel /etc/redis/sentinel.conf
